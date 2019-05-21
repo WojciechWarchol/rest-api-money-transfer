@@ -1,5 +1,6 @@
 package com.wojto.restapimoneytransfer.entity;
 
+import com.wojto.restapimoneytransfer.testdb.DummyDB;
 
 public class Account {
 	
@@ -47,9 +48,9 @@ public class Account {
 //	}
 
 	// Getting the password?
-//	public String getPassword() {
-//		return password;
-//	}
+	public String getPassword() {
+		return password;
+	}
 
 	public boolean setPassword(String oldPassword, String newPassword) {
 		
@@ -64,15 +65,24 @@ public class Account {
 	public boolean transfer(int recipientId, double ammount) {
 		
 		ammount = round(ammount);
+		double balanceBeforeTransfer = balance;
 		
-		if(ammount < balance) {
+		if(ammount <= balance) {
 			
 			this.balance = balance - ammount;
 			// get the Account with the Id
+			Account recipient = DummyDB.accountList.get(recipientId);
 			
 			// transfer the ammount to the Recipient Account
+			try {
+				recipient.acceptTransfer(ammount);
+			} catch (Exception e) {
+				this.balance = balanceBeforeTransfer;
+				return false;
+			}
 			
 			// If that returned true, return true here, else add the ammount back
+			
 			return true;
 		}
 		

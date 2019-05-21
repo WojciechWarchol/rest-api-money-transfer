@@ -1,0 +1,5 @@
+com\wojto\restapimoneytransfer\entity\Account.class
+com\wojto\restapimoneytransfer\entity\Transfer.class
+com\wojto\restapimoneytransfer\App.class
+com\wojto\restapimoneytransfer\testdb\DummyDB.class
+com\wojto\restapimoneytransfer\controller\RestController.class

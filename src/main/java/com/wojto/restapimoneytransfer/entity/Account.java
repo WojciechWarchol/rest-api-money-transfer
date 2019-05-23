@@ -1,107 +1,49 @@
 package com.wojto.restapimoneytransfer.entity;
 
-import com.wojto.restapimoneytransfer.testdb.DummyDB;
-
 public class Account {
 	
-	private int id;
+	private long id;
 	private double balance;
-	private String password;
-	
-//	String firstName;
-//	String lastName;
-//	String email;
 	
 	public Account() {}
 	
-	public Account(int id, double balance, String password) {
+	public Account(long id, double balance) {
 		this.id = id;
 		this.balance = round(balance);
-		this.password = password;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
-
-	// We probably won't be changing the Id.
-//	public void setId(int id) {
-//		this.id = id;
-//	}
-
-	// If we want to check the password
-//	public double getBalance(String password) {
-//		if(this.password == password) {
-//			return balance;
-//		} 
-//		System.out.println("Invalid password");
-//		return -1.00;
-//	}
 	
 	public double getBalance() {
 		return balance;
 	}
-
-	// No balance setting, only transfers
-//	public void setBalance(double balance) {
-//		this.balance = balance;
-//	}
-
-	// Getting the password?
-	public String getPassword() {
-		return password;
-	}
-
-	public boolean setPassword(String oldPassword, String newPassword) {
-		
-		if(this.password == oldPassword) {
-		this.password = newPassword;
-		return true;
-		}
-		
-		return false;
-	}
-
-	public boolean transfer(int recipientId, double ammount) {
+	
+	public boolean withdraw(double ammount) {
 		
 		ammount = round(ammount);
-		double balanceBeforeTransfer = balance;
 		
-		if(ammount <= balance) {
-			
+		if(ammount <= balance && ammount >=0) {
 			this.balance = balance - ammount;
-			// get the Account with the Id
-			Account recipient = DummyDB.accountList.get(recipientId);
-			
-			// transfer the ammount to the Recipient Account
-			try {
-				recipient.acceptTransfer(ammount);
-			} catch (Exception e) {
-				this.balance = balanceBeforeTransfer;
-				return false;
-			}
-			
-			// If that returned true, return true here, else add the ammount back
-			
 			return true;
 		}
 		
 		return false;
 	}
 	
-	// method for accpeting the transfer 
-	public boolean acceptTransfer(double ammount) throws Exception {
+	public boolean deposit(double ammount) {
 		
-		double balanceBeforeTransfer = balance;
+		ammount = round(ammount);
 		
-		try {
+		if(ammount >= 0) {
 			this.balance += ammount;
-		} catch (Exception e) {
-			this.balance = balanceBeforeTransfer;
-			return false;
+			return true;
 		}
-		return true;
+		
+		return false;
 	}
+	
 	
 	// Rouding if an ammount with more than 2 decimal places is given.
 	private double round(double ammount) {

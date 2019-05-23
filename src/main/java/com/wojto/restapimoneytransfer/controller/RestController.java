@@ -1,6 +1,8 @@
 package com.wojto.restapimoneytransfer.controller;
 
 
+import java.io.IOException;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -8,14 +10,21 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.wojto.restapimoneytransfer.entity.Account;
+import com.wojto.restapimoneytransfer.entity.AccountBalance;
 import com.wojto.restapimoneytransfer.entity.Transfer;
-import com.wojto.restapimoneytransfer.testdb.DummyDB;
+import com.wojto.restapimoneytransfer.entity.RequestStatus;
+import com.wojto.restapimoneytransfer.entity.ResponseObject;
+import com.wojto.restapimoneytransfer.service.TransferService;
+import com.wojto.restapimoneytransfer.service.TransferServiceImpl;
+
 
 
 
 @Path("/bank")
 public class RestController {
+	
+	// Should be injected, created this way for simplicity.
+	TransferService service = new TransferServiceImpl();
 	
 	@GET
 	@Path("test")
@@ -26,32 +35,26 @@ public class RestController {
 	
 	@GET
 	@Path("get-balance/{id}")
-	@Produces(MediaType.TEXT_PLAIN)
-	public double getBalance(@PathParam("id") int id) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseObject getBalance(@PathParam("id") long id) {
 		
-		return DummyDB.accountList.get(id).getBalance();
+		double accountBalance;
 		
+		try {
+			accountBalance = service.getBalance(id);
+		} catch (NullPointerException e) {
+			return new RequestStatus(false);
+		}
+		
+		return new AccountBalance(accountBalance);
 	}
-	
-//	@GET
-//	@Path("jsontest/{id}")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Account getAccount(@PathParam("id") int id) {
-//
-//		Account account = new Account(1, 300, "pass");
-//		
-//		return account;
-//		
-//	}
 	
 	@POST
 	@Path("transfer")
-	@Produces(MediaType.TEXT_PLAIN)
-	public boolean transfer(Transfer transfer) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public RequestStatus transfer(Transfer transfer) throws IOException{
 		
-		return DummyDB.accountList
-				.get(transfer.getSenderId())
-				.transfer(transfer.getRecipientId(), transfer.getAmmount());
+		return new RequestStatus(service.transfer(transfer));
 		
 	}
 	

@@ -1,1 +1,5 @@
+com\wojto\rest_api_money_transfer\ControllerTest.class
+com\wojto\rest_api_money_transfer\AccountDAOTest.class
+com\wojto\rest_api_money_transfer\AccountTest.class
+com\wojto\rest_api_money_transfer\TransferServiceTest.class
 com\wojto\rest_api_money_transfer\AppTest.class
